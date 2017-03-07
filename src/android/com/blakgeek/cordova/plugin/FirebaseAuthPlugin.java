@@ -64,6 +64,8 @@ public class FirebaseAuthPlugin extends CordovaPlugin implements OnCompleteListe
                 return initialize(args, callbackContext);
             case "getToken":
                 return getToken(callbackContext);
+            case "signInWithCustomToken":
+                return  signInWithCustomToken(args, callbackContext);
             case "signIn":
                 return signIn();
             case "signOut":
@@ -91,6 +93,26 @@ public class FirebaseAuthPlugin extends CordovaPlugin implements OnCompleteListe
         }
         return true;
     }
+
+    private boolean signInWithCustomToken(JSONArray args, final CallbackContext callbackContext) throws JSONException {
+        String token = args.getString(0);
+
+
+        firebaseAuth.signInWithCustomToken(token).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (!task.isSuccessful()) {
+                    callbackContext.error("authentication_failed");
+                }
+                else {
+                    callbackContext.success("ok");
+                }
+            }
+        });
+
+        return true;
+    }
+
 
     private boolean signOut() {
         Auth.GoogleSignInApi.signOut(googleApiClient);

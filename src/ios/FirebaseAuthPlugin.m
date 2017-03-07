@@ -18,7 +18,7 @@
 - (void)getToken:(CDVInvokedUrlCommand *)command {
 
     FIRUser *currentUser = [FIRAuth auth].currentUser;
-    [currentUser getTokenForcingRefresh:YES
+    [currentUser getTokenForcingRefresh:NO
                              completion:^(NSString *_Nullable idToken,
                                           NSError *_Nullable error) {
 
@@ -47,6 +47,24 @@
                              }];
 
 }
+
+- (void)signInWithCustomToken:(CDVInvokedUrlCommand *)command {
+    NSString *customToken = [command argumentAtIndex:0];
+
+    [[FIRAuth auth] signInWithCustomToken:customToken
+                               completion:^(FIRUser *_Nullable user,
+                                            NSError *_Nullable error) {
+                                    if (error) {
+                                         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:@"authentication_failed"];
+                                         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+                                    }
+                                    else {
+                                         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@"ok"];
+                                         [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+                                    }
+                               }];
+}
+
 
 - (void)signIn:(CDVInvokedUrlCommand *)command {
 
@@ -132,7 +150,7 @@
 
         if (error == nil) {
             FIRUser *currentUser = [FIRAuth auth].currentUser;
-            [currentUser getTokenForcingRefresh:YES
+            [currentUser getTokenForcingRefresh:NO
                                      completion:^(NSString *_Nullable idToken,
                                                   NSError *_Nullable error) {
                                          
