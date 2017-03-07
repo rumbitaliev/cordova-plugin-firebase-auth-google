@@ -18,6 +18,18 @@ function FirebaseAuth(options) {
         }
     };
 
+    this.signInWithCustomToken = function(token, success, failure) {
+
+        if(window.Promise) {
+            return new Promise(function (resolve, reject) {
+
+                exec(resolve, reject, 'FirebaseAuthPlugin', 'signInWithCustomToken', [token]);
+            });
+        } else {
+            return exec(success, failure, 'FirebaseAuthPlugin', 'signInWithCustomToken', [token]);
+        }
+    };
+    
     this.signIn = function () {
 
         return exec(null, null, 'FirebaseAuthPlugin', 'signIn', []);
